@@ -79,25 +79,27 @@ export function WorkflowForm({
   onSubmit
 }: WorkflowFormProps) {
   return (
-    <section className="rounded-[28px] border border-ink/10 bg-paper/90 p-6 shadow-card backdrop-blur">
-      <div className="mb-6">
-        <p className="text-sm uppercase tracking-[0.24em] text-ember">Workflow Intake</p>
-        <h2 className="mt-2 font-serif text-3xl text-ink">Describe the AI workflow you want to evaluate.</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/70">
+    <section className="rounded-[36px] border border-ink/8 bg-paper/88 p-7 shadow-panel backdrop-blur-sm">
+      <div className="mb-8">
+        <p className="editorial-kicker text-[11px] uppercase text-moss">Workflow Intake</p>
+        <h2 className="mt-3 max-w-2xl font-serif text-[2.4rem] leading-tight text-ink">
+          Describe the system, then shape the evaluation around what matters.
+        </h2>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate">
           Start with the core description, then add optional context to sharpen the generated success criteria,
           failure modes, and starter dataset.
         </p>
       </div>
 
-      <div className="mb-6 rounded-[24px] border border-ink/10 bg-sand/55 p-4">
-        <p className="text-xs uppercase tracking-[0.22em] text-moss">Model Engine</p>
+      <div className="mb-7 rounded-[28px] border border-ink/8 bg-fog/80 p-5">
+        <p className="editorial-kicker text-[11px] uppercase text-moss">Model Engine</p>
         <div className="mt-4 grid gap-4 md:grid-cols-[0.85fr_1.15fr]">
           <label>
             <span className="mb-2 block text-sm font-semibold text-ink">Provider</span>
             <select
               value={generation.provider}
               onChange={(event) => onProviderChange(event.target.value as GenerationProvider)}
-              className="w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-ember focus:ring-2 focus:ring-ember/15"
+              className="w-full rounded-[20px] border border-ink/10 bg-white/95 px-4 py-3 text-sm text-ink outline-none transition focus:border-moss focus:ring-2 focus:ring-moss/15"
             >
               {providerOptions.map((option) => (
                 <option
@@ -117,14 +119,14 @@ export function WorkflowForm({
               onChange={(event) => onModelChange(event.target.value)}
               disabled={generation.provider === "mock"}
               placeholder={providerOptions.find((option) => option.value === generation.provider)?.defaultModel}
-              className="w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink/35 focus:border-ember focus:ring-2 focus:ring-ember/15 disabled:cursor-not-allowed disabled:bg-white/60"
+              className="w-full rounded-[20px] border border-ink/10 bg-white/95 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15 disabled:cursor-not-allowed disabled:bg-white/60"
             />
           </label>
         </div>
-        <p className="mt-3 text-sm leading-6 text-ink/65">
+        <p className="mt-3 text-sm leading-7 text-slate">
           {providerOptions.find((option) => option.value === generation.provider)?.description}
         </p>
-        <p className="mt-2 text-xs uppercase tracking-[0.16em] text-ink/45">
+        <p className="mt-3 text-xs uppercase tracking-[0.18em] text-slate/70">
           Active engine: {getProviderLabel(generation.provider)} / {generation.model}
         </p>
       </div>
@@ -145,33 +147,39 @@ export function WorkflowForm({
                 value={form[field.key] || ""}
                 onChange={(event) => onChange(field.key, event.target.value)}
                 placeholder={field.placeholder}
-                className="min-h-28 w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink/35 focus:border-ember focus:ring-2 focus:ring-ember/15"
+                className="min-h-28 w-full rounded-[22px] border border-ink/10 bg-white/96 px-5 py-4 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15"
               />
             ) : (
               <input
                 value={form[field.key] || ""}
                 onChange={(event) => onChange(field.key, event.target.value)}
                 placeholder={field.placeholder}
-                className="w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink/35 focus:border-ember focus:ring-2 focus:ring-ember/15"
+                className="w-full rounded-[22px] border border-ink/10 bg-white/96 px-5 py-4 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15"
               />
             )}
           </label>
         ))}
       </div>
 
-      <div className="mt-6 flex flex-col gap-3 border-t border-ink/8 pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-ink/60">Required fields are enough for a demo. Optional fields improve specificity.</p>
+      <div className="soft-divider mt-8" />
+
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm leading-7 text-slate">
+          Required fields are enough for a demo. Optional fields improve specificity.
+        </p>
         <button
           type="button"
           onClick={onSubmit}
           disabled={isLoading}
-          className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-ember disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#1a3044] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? "Generating..." : "Generate Eval Kit"}
         </button>
       </div>
 
-      {error ? <p className="mt-4 rounded-2xl bg-ember/10 px-4 py-3 text-sm text-ember">{error}</p> : null}
+      {error ? (
+        <p className="mt-5 rounded-[22px] border border-ember/14 bg-ember/8 px-4 py-3 text-sm text-ember">{error}</p>
+      ) : null}
     </section>
   );
 }

@@ -8,10 +8,10 @@ type SectionCardProps = {
 
 export function SectionCard({ title, eyebrow, children }: SectionCardProps) {
   return (
-    <section className="section-fade rounded-[24px] border border-ink/10 bg-white/80 p-5 shadow-card">
-      {eyebrow ? <p className="text-xs uppercase tracking-[0.22em] text-moss">{eyebrow}</p> : null}
-      <h3 className="mt-2 font-serif text-2xl text-ink">{title}</h3>
-      <div className="mt-4 text-sm leading-6 text-ink/80">{children}</div>
+    <section className="section-fade rounded-[28px] border border-ink/8 bg-white/82 p-6 shadow-card backdrop-blur-sm">
+      {eyebrow ? <p className="editorial-kicker text-[11px] uppercase text-moss">{eyebrow}</p> : null}
+      <h3 className="mt-3 font-serif text-[2rem] leading-tight text-ink">{title}</h3>
+      <div className="mt-5 text-sm leading-7 text-slate">{children}</div>
     </section>
   );
 }

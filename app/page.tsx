@@ -107,36 +107,53 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-6 sm:px-6 lg:px-10">
+    <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-10">
       <div className="mx-auto max-w-7xl">
-        <header className="mb-6 overflow-hidden rounded-[32px] border border-ink/10 bg-ink text-white shadow-card">
-          <div className="grid gap-10 px-6 py-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-10 lg:py-10">
-            <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-gold">AI Eval Starter Kit</p>
-              <h1 className="mt-3 max-w-3xl font-serif text-4xl leading-tight sm:text-5xl">
-                Turn a plain-English workflow idea into an eval-ready starter package.
+        <header className="hero-sheen mb-7 overflow-hidden rounded-[40px] border border-ink/8 bg-ink text-white shadow-panel">
+          <div className="grid gap-10 px-6 py-9 lg:grid-cols-[1.18fr_0.82fr] lg:px-10 lg:py-12">
+            <div className="relative z-10">
+              <p className="editorial-kicker text-[11px] uppercase text-[#d7c29a]">Evaluation Design Toolkit</p>
+              <h1 className="mt-4 max-w-4xl font-serif text-[3.7rem] leading-[0.94] sm:text-[4.6rem]">
+                Shape practical AI evaluations with the clarity of a consulting-grade workbench.
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
+              <p className="mt-5 max-w-2xl text-sm leading-8 text-white/72 sm:text-base">
                 Generate success criteria, failure modes, starter test cases, a scoring rubric, and an exportable
                 dataset schema for the AI workflow you&apos;re shaping.
               </p>
             </div>
 
-            <div className="rounded-[28px] border border-white/10 bg-white/8 p-5 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.24em] text-gold">Quick Start</p>
-              <h2 className="mt-2 font-serif text-2xl">Load an example and generate in under a minute.</h2>
-              <p className="mt-3 text-sm leading-6 text-white/75">
+            <div className="relative z-10 rounded-[32px] border border-white/10 bg-white/7 p-6 backdrop-blur-md">
+              <p className="editorial-kicker text-[11px] uppercase text-[#d7c29a]">Quick Start</p>
+              <h2 className="mt-3 max-w-md font-serif text-[2.15rem] leading-tight">
+                Load an example and generate in under a minute.
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-white/72">
                 Switch between mock, OpenAI, xAI, or any OpenAI-compatible endpoint without changing the app
                 architecture.
               </p>
-              <div className="mt-5">
+              <div className="mt-6">
                 <ExampleButtons examples={exampleWorkflows} onLoadExample={loadExample} />
+              </div>
+              <div className="soft-divider mt-7" />
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                <div>
+                  <p className="text-2xl font-semibold text-white">3</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/55">Starter Workflows</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold text-white">4</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/55">Generation Modes</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold text-white">2</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/55">Export Formats</p>
+                </div>
               </div>
             </div>
           </div>
         </header>
 
-        <div className="grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
+        <div className="grid gap-7 xl:grid-cols-[0.92fr_1.08fr]">
           <WorkflowForm
             form={form}
             generation={generation}

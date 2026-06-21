@@ -113,13 +113,195 @@ function extractJsonObject(text: string): string {
   }
 
   const firstBrace = text.indexOf("{");
-  const lastBrace = text.lastIndexOf("}");
-
-  if (firstBrace >= 0 && lastBrace > firstBrace) {
-    return text.slice(firstBrace, lastBrace + 1);
+  if (firstBrace < 0) {
+    return text.trim();
   }
 
-  return text.trim();
+  let depth = 0;
+  let inString = false;
+  let escaping = false;
+
+  for (let index = firstBrace; index < text.length; index += 1) {
+    const char = text[index];
+
+    if (inString) {
+      if (escaping) {
+        escaping = false;
+      } else if (char === "\\") {
+        escaping = true;
+      } else if (char === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === "\"") {
+      inString = true;
+      continue;
+    }
+
+    if (char === "{") {
+      depth += 1;
+    } else if (char === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        return text.slice(firstBrace, index + 1).trim();
+      }
+    }
+  }
+
+  return text.slice(firstBrace).trim();
+}
+
+function toText(value: unknown, fallback = ""): string {
+  if (typeof value === "string") {
+    return value.trim();
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .flatMap((item) => {
+        if (typeof item === "string") {
+          return item.trim();
+        }
+
+        if (item == null) {
+          return [];
+        }
+
+        return String(item).trim();
+      })
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  if (value == null) {
+    return fallback;
+  }
+
+  return String(value).trim() || fallback;
+}
+
+function toStringArray(value: unknown, fallback: string[]): string[] {
+  if (Array.isArray(value)) {
+    const normalized = value
+      .map((item) => toText(item))
+      .filter(Boolean);
+
+    if (normalized.length > 0) {
+      return normalized;
+    }
+  }
+
+  if (typeof value === "string") {
+    const normalized = value
+      .split(/\n|;/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    if (normalized.length > 0) {
+      return normalized;
+    }
+  }
+
+  return fallback;
+}
+
+function repairEvalKit(candidate: unknown, input: WorkflowInput): EvalKit {
+  const fallback = buildMockEvalKit(input);
+  const source = typeof candidate === "object" && candidate !== null ? (candidate as Record<string, unknown>) : {};
+  const workflowSummarySource =
+    typeof source.workflowSummary === "object" && source.workflowSummary !== null
+      ? (source.workflowSummary as Record<string, unknown>)
+      : {};
+
+  const testCaseSource = Array.isArray(source.testCases) ? source.testCases : [];
+  const rubricSource = Array.isArray(source.graderRubric) ? source.graderRubric : [];
+  const schemaSource =
+    typeof source.evalDatasetSchema === "object" && source.evalDatasetSchema !== null
+      ? (source.evalDatasetSchema as Record<string, unknown>)
+      : {};
+
+  const repairedTestCases = [
+    ...testCaseSource.map((item, index) => {
+      const record = typeof item === "object" && item !== null ? (item as Record<string, unknown>) : {};
+      const backup = fallback.testCases[index % fallback.testCases.length];
+
+      return {
+        id: toText(record.id, backup.id),
+        title: toText(record.title, backup.title),
+        scenario: toText(record.scenario, backup.scenario),
+        sampleInput: toText(record.sampleInput, backup.sampleInput),
+        expectedBehavior: toText(record.expectedBehavior, backup.expectedBehavior),
+        primaryRisk: toText(record.primaryRisk, backup.primaryRisk)
+      };
+    }),
+    ...fallback.testCases
+  ].slice(0, 12);
+
+  const repairedRubric = [
+    ...rubricSource.map((item, index) => {
+      const record = typeof item === "object" && item !== null ? (item as Record<string, unknown>) : {};
+      const backup = fallback.graderRubric[index % fallback.graderRubric.length];
+
+      return {
+        name: toText(record.name, backup.name),
+        description: toText(record.description, backup.description),
+        scaleMin:
+          typeof record.scaleMin === "number" && Number.isFinite(record.scaleMin) ? record.scaleMin : backup.scaleMin,
+        scaleMax:
+          typeof record.scaleMax === "number" && Number.isFinite(record.scaleMax) ? record.scaleMax : backup.scaleMax,
+        highScoreMeaning: toText(record.highScoreMeaning, backup.highScoreMeaning),
+        lowScoreMeaning: toText(record.lowScoreMeaning, backup.lowScoreMeaning)
+      };
+    }),
+    ...fallback.graderRubric
+  ].slice(0, 6);
+
+  const repaired: EvalKit = {
+    workflowSummary: {
+      summary: toText(workflowSummarySource.summary, fallback.workflowSummary.summary),
+      inputAssumptions: toStringArray(
+        workflowSummarySource.inputAssumptions,
+        fallback.workflowSummary.inputAssumptions
+      ),
+      outputAssumptions: toStringArray(
+        workflowSummarySource.outputAssumptions,
+        fallback.workflowSummary.outputAssumptions
+      ),
+      evalFocus: toStringArray(workflowSummarySource.evalFocus, fallback.workflowSummary.evalFocus)
+    },
+    successCriteria: toStringArray(source.successCriteria, fallback.successCriteria).slice(0, 8),
+    failureModes: toStringArray(source.failureModes, fallback.failureModes).slice(0, 10),
+    testCases: repairedTestCases,
+    graderRubric: repairedRubric,
+    evalDatasetSchema: {
+      type: toText(schemaSource.type, fallback.evalDatasetSchema.type),
+      properties:
+        typeof schemaSource.properties === "object" && schemaSource.properties !== null
+          ? (schemaSource.properties as Record<string, unknown>)
+          : fallback.evalDatasetSchema.properties,
+      required: toStringArray(schemaSource.required, fallback.evalDatasetSchema.required)
+    }
+  };
+
+  if (repaired.successCriteria.length < 5) {
+    repaired.successCriteria = fallback.successCriteria;
+  }
+
+  if (repaired.failureModes.length < 6) {
+    repaired.failureModes = fallback.failureModes;
+  }
+
+  if (repaired.testCases.length < 8) {
+    repaired.testCases = fallback.testCases;
+  }
+
+  if (repaired.graderRubric.length < 4) {
+    repaired.graderRubric = fallback.graderRubric;
+  }
+
+  return evalKitSchema.parse(repaired);
 }
 
 async function generateWithPromptedJson(input: WorkflowInput, settings: GenerationSettings): Promise<EvalKit> {
@@ -133,7 +315,7 @@ async function generateWithPromptedJson(input: WorkflowInput, settings: Generati
   });
 
   const parsedText = extractJsonObject(result.text);
-  return evalKitSchema.parse(JSON.parse(parsedText));
+  return repairEvalKit(JSON.parse(parsedText), input);
 }
 
 async function generateWithProvider(input: WorkflowInput, settings: GenerationSettings): Promise<EvalKit> {
@@ -151,7 +333,7 @@ async function generateWithProvider(input: WorkflowInput, settings: GenerationSe
         prompt: buildGeneratorPrompt(input)
       });
 
-      return evalKitSchema.parse(result.object);
+      return repairEvalKit(result.object, input);
     }
 
     return await generateWithPromptedJson(input, settings);

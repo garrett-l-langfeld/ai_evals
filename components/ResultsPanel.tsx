@@ -17,10 +17,10 @@ type ResultsPanelProps = {
 export function ResultsPanel({ input, evalKit, provider, model, isLoading }: ResultsPanelProps) {
   if (isLoading) {
     return (
-      <section className="rounded-[28px] border border-ink/10 bg-ink px-6 py-8 text-white shadow-card">
-        <p className="text-xs uppercase tracking-[0.24em] text-gold">Generating</p>
-        <h2 className="mt-2 font-serif text-3xl">Building your starter eval kit...</h2>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-white/75">
+      <section className="rounded-[36px] border border-ink/8 bg-ink px-7 py-9 text-white shadow-panel">
+        <p className="editorial-kicker text-[11px] uppercase text-[#d7c29a]">Generating</p>
+        <h2 className="mt-3 font-serif text-[2.4rem] leading-tight">Building your starter eval kit...</h2>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72">
           We&apos;re drafting success criteria, failure modes, starter test cases, a rubric, and export-ready
           artifacts.
         </p>
@@ -30,10 +30,12 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
 
   if (!evalKit || !provider || !model) {
     return (
-      <section className="grid-accent rounded-[28px] border border-dashed border-ink/15 bg-white/45 p-8">
-        <p className="text-xs uppercase tracking-[0.24em] text-moss">Empty State</p>
-        <h2 className="mt-2 font-serif text-3xl text-ink">Your eval kit will appear here.</h2>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-ink/70">
+      <section className="grid-accent rounded-[36px] border border-dashed border-ink/15 bg-white/38 p-8 shadow-card">
+        <p className="editorial-kicker text-[11px] uppercase text-moss">Empty State</p>
+        <h2 className="mt-4 max-w-3xl font-serif text-[3.4rem] leading-[0.95] text-ink">
+          Your eval kit will appear here.
+        </h2>
+        <p className="mt-6 max-w-2xl text-base leading-8 text-slate">
           Load one of the example workflows or describe your own AI system above, then generate a starter package
           you can review and export.
         </p>
@@ -46,22 +48,22 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
 
   return (
     <section className="space-y-5">
-      <div className="rounded-[28px] border border-ink/10 bg-ink px-6 py-6 text-white shadow-card">
+      <div className="hero-sheen rounded-[36px] border border-ink/8 bg-ink px-7 py-7 text-white shadow-panel">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-gold">Generated Kit</p>
-            <h2 className="mt-2 font-serif text-3xl">{input.workflowName}</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/75">
+          <div className="relative z-10">
+            <p className="editorial-kicker text-[11px] uppercase text-[#d7c29a]">Generated Kit</p>
+            <h2 className="mt-3 max-w-3xl font-serif text-[2.7rem] leading-tight">{input.workflowName}</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72">
               Ready for review, copy, and export. Current engine:{" "}
               <span className="font-semibold">{getProviderLabel(provider)}</span> /{" "}
               <span className="font-semibold">{model}</span>.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="relative z-10 flex flex-wrap gap-3">
             <button
               type="button"
               onClick={() => downloadTextFile("eval-kit.json", jsonExport, "application/json")}
-              className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-ink transition hover:-translate-y-0.5"
+              className="rounded-full bg-[#e8d9b8] px-4 py-2 text-sm font-semibold text-ink transition hover:-translate-y-0.5 hover:bg-[#efe2c6]"
             >
               Export JSON
             </button>
@@ -129,14 +131,14 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
           {evalKit.testCases.map((testCase) => (
             <article
               key={testCase.id}
-              className="rounded-[20px] border border-ink/10 bg-sand/55 p-4"
+              className="rounded-[24px] border border-ink/8 bg-fog/72 p-5"
             >
               <p className="text-xs uppercase tracking-[0.18em] text-moss">{testCase.id}</p>
-              <h4 className="mt-2 text-base font-semibold text-ink">{testCase.title}</h4>
-              <p className="mt-2 text-sm text-ink/75">{testCase.scenario}</p>
-              <p className="mt-3 text-sm"><span className="font-semibold">Sample input:</span> {testCase.sampleInput}</p>
-              <p className="mt-2 text-sm"><span className="font-semibold">Expected behavior:</span> {testCase.expectedBehavior}</p>
-              <p className="mt-2 text-sm"><span className="font-semibold">Primary risk:</span> {testCase.primaryRisk}</p>
+              <h4 className="mt-3 text-base font-semibold text-ink">{testCase.title}</h4>
+              <p className="mt-2 text-sm leading-7 text-slate">{testCase.scenario}</p>
+              <p className="mt-4 text-sm leading-7"><span className="font-semibold text-ink">Sample input:</span> {testCase.sampleInput}</p>
+              <p className="mt-2 text-sm leading-7"><span className="font-semibold text-ink">Expected behavior:</span> {testCase.expectedBehavior}</p>
+              <p className="mt-2 text-sm leading-7"><span className="font-semibold text-ink">Primary risk:</span> {testCase.primaryRisk}</p>
             </article>
           ))}
         </div>
@@ -148,24 +150,24 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
             {evalKit.graderRubric.map((dimension) => (
               <article
                 key={dimension.name}
-                className="rounded-[20px] border border-ink/10 bg-white p-4"
+                className="rounded-[24px] border border-ink/8 bg-fog/55 p-5"
               >
                 <div className="flex items-center justify-between gap-4">
                   <h4 className="text-base font-semibold text-ink">{dimension.name}</h4>
-                  <span className="rounded-full bg-ember/10 px-3 py-1 text-xs font-semibold text-ember">
+                  <span className="rounded-full bg-[#e8d9b8] px-3 py-1 text-xs font-semibold text-ink">
                     {dimension.scaleMin}-{dimension.scaleMax}
                   </span>
                 </div>
-                <p className="mt-2 text-sm text-ink/75">{dimension.description}</p>
-                <p className="mt-3 text-sm"><span className="font-semibold">High score:</span> {dimension.highScoreMeaning}</p>
-                <p className="mt-2 text-sm"><span className="font-semibold">Low score:</span> {dimension.lowScoreMeaning}</p>
+                <p className="mt-3 text-sm leading-7 text-slate">{dimension.description}</p>
+                <p className="mt-4 text-sm leading-7"><span className="font-semibold text-ink">High score:</span> {dimension.highScoreMeaning}</p>
+                <p className="mt-2 text-sm leading-7"><span className="font-semibold text-ink">Low score:</span> {dimension.lowScoreMeaning}</p>
               </article>
             ))}
           </div>
         </SectionCard>
 
         <SectionCard title="Eval Dataset Schema" eyebrow="Export Model">
-          <pre className="overflow-x-auto rounded-[20px] bg-ink p-4 text-xs leading-6 text-white">
+          <pre className="overflow-x-auto rounded-[24px] bg-ink p-5 text-xs leading-7 text-white">
             {JSON.stringify(evalKit.evalDatasetSchema, null, 2)}
           </pre>
         </SectionCard>

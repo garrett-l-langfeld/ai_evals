@@ -4,29 +4,76 @@
 
 :root {
   color-scheme: light;
+  --page-ivory: #f7f3ea;
+  --page-paper: #fffdf8;
+  --page-ink: #112334;
+  --page-sage: #667d70;
+  --page-line: rgba(17, 35, 52, 0.08);
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+html,
 body {
-  @apply bg-sand text-ink;
+  min-height: 100%;
+}
+
+body {
+  @apply bg-sand text-ink antialiased;
   background-image:
-    radial-gradient(circle at top left, rgba(214, 173, 67, 0.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(77, 107, 87, 0.14), transparent 26%),
-    linear-gradient(180deg, #f9f2e2 0%, #f5efe2 45%, #f8f5ee 100%);
+    radial-gradient(circle at 14% 14%, rgba(198, 108, 75, 0.08), transparent 0 22rem),
+    radial-gradient(circle at 88% 6%, rgba(102, 125, 112, 0.14), transparent 0 24rem),
+    linear-gradient(180deg, #f8f5ee 0%, #f5f1e7 44%, #f8f6f0 100%);
 }
 
 ::selection {
-  background: rgba(234, 106, 59, 0.2);
+  background: rgba(200, 108, 75, 0.18);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--page-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--page-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.3), transparent 78%);
+  opacity: 0.35;
 }
 
 .grid-accent {
   background-image:
-    linear-gradient(rgba(16, 33, 43, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 33, 43, 0.05) 1px, transparent 1px);
-  background-size: 28px 28px;
+    linear-gradient(rgba(17, 35, 52, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 35, 52, 0.06) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+
+.hero-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.1), transparent 40%),
+    radial-gradient(circle at top right, rgba(214, 194, 154, 0.18), transparent 0 18rem);
+}
+
+.soft-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(17, 35, 52, 0.12), transparent);
+}
+
+.editorial-kicker {
+  letter-spacing: 0.26em;
 }
 
 .section-fade {
