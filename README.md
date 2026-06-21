@@ -18,6 +18,7 @@ It generates:
 - TypeScript
 - Tailwind CSS
 - Zod
+- Vercel AI SDK provider layer
 
 ## Setup
 
@@ -33,11 +34,28 @@ npm install
 cp .env.example .env.local
 ```
 
-3. Add your OpenAI API key to `.env.local`:
+3. Add credentials for any provider you want to use.
+
+For OpenAI:
 
 ```bash
 OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_MODEL=gpt-4.1-mini
+```
+
+For xAI:
+
+```bash
+XAI_API_KEY=your_xai_api_key_here
+```
+
+For an OpenAI-compatible provider such as OpenRouter:
+
+```bash
+COMPATIBLE_API_KEY=your_provider_key_here
+COMPATIBLE_BASE_URL=https://openrouter.ai/api/v1
+COMPATIBLE_PROVIDER_NAME=OpenRouter
+COMPATIBLE_SUPPORTS_STRUCTURED_OUTPUTS=false
+NEXT_PUBLIC_COMPATIBLE_MODEL=meta-llama/llama-3.3-8b-instruct:free
 ```
 
 4. Start the app locally:
@@ -48,42 +66,76 @@ npm run dev
 
 5. Open [http://localhost:3000](http://localhost:3000).
 
-## OpenAI API key
+## Provider support
 
-The app supports two modes:
+The app supports four generation modes:
 
-- `OpenAI mode`: used when `OPENAI_API_KEY` is present in `.env.local`
-- `Mock mode`: used when no API key is configured
+- `Mock`: deterministic local demo, no API key needed
+- `OpenAI`: uses `OPENAI_API_KEY`
+- `xAI`: uses `XAI_API_KEY`
+- `OpenAI-compatible`: uses `COMPATIBLE_API_KEY` plus `COMPATIBLE_BASE_URL`
 
-Your API key is only read on the server inside the Next.js API route. It is not exposed to the browser UI and should never be committed to Git.
+Users choose the provider and model in the app UI. Secrets stay server-side in the Next.js API route and are never exposed in client-side code.
 
 ### Important safety rules
 
-- Put your real key in `.env.local`, not in source files.
+- Put real keys in `.env.local`, not in source files.
 - Never commit `.env.local` to GitHub.
 - `.env.local` is already ignored by `.gitignore`.
 - Commit `.env.example` instead so other users know which variables to supply.
 
-If `OPENAI_API_KEY` is set but invalid, the app now shows an error instead of silently falling back to mock mode. That makes live demos easier to trust.
+If a provider is selected but its key or base URL is missing, the app shows a configuration error instead of silently switching engines.
 
-## Mock mode
+## OpenAI-compatible providers
 
-Mock mode is the default local demo path. It creates deterministic, structured eval kits without making any external API calls, so the app remains demoable after a fresh install.
+The `OpenAI-compatible` option is intentionally generic. It can be used with services such as OpenRouter or any other provider that exposes an OpenAI-style chat completions API.
+
+If you want the UI to prefill a free OpenRouter model automatically, set:
+
+```bash
+NEXT_PUBLIC_COMPATIBLE_MODEL=meta-llama/llama-3.3-8b-instruct:free
+```
+
+Then choose `OpenAI-compatible` in the app and that model slug will already be filled in.
+
+If your compatible provider supports structured outputs reliably, set:
+
+```bash
+COMPATIBLE_SUPPORTS_STRUCTURED_OUTPUTS=true
+```
+
+For OpenRouter free models, `false` is usually the safer default. Leave it `false` and the app will use a more general JSON-generation path through the SDK.
 
 ## Running from GitHub
 
-After cloning the repository, a new user can run the app with their own key by following the same setup flow:
+After cloning the repository, another user can run the app with their own provider key by following the same setup flow:
 
 ```bash
 npm install
 cp .env.example .env.local
 ```
 
-Then they add their own `OPENAI_API_KEY` value in `.env.local` and run:
+Then they add their own provider credentials in `.env.local` and run:
 
 ```bash
 npm run dev
 ```
+
+## Testing
+
+For static verification:
+
+```bash
+npm run typecheck
+npm run build
+```
+
+For a quick demo:
+
+1. Open the app.
+2. Pick `Mock` for a quota-free local demo, or choose a real provider and model.
+3. Load one of the built-in examples.
+4. Click `Generate Eval Kit`.
 
 ## Project structure
 
@@ -103,6 +155,8 @@ lib/
   export.ts
   generator.ts
   markdown.ts
+  mock-generator.ts
+  model-providers.ts
   prompt.ts
   schemas.ts
 types/
@@ -111,7 +165,7 @@ types/
 
 ## Future improvements
 
-- richer OpenAI structured output handling
+- show configured provider availability in the UI
 - per-section copy actions
 - editable test case count and rubric strictness
 - localStorage persistence
@@ -119,6 +173,6 @@ types/
 
 ## Notes
 
-- The MVP is fully wired for local demo in mock mode.
-- The OpenAI path is intentionally isolated in `lib/generator.ts` so it can be improved without touching the UI flow.
+- The generator runs through the Vercel AI SDK provider layer, so new providers can be added without rewriting the app flow.
+- Mock mode remains available for fast demos and quota-free local testing.
 - API keys stay server-side and are not stored in the repository.

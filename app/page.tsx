@@ -5,8 +5,9 @@ import { ExampleButtons } from "@/components/ExampleButtons";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { WorkflowForm } from "@/components/WorkflowForm";
 import { exampleWorkflows } from "@/lib/examples";
-import { workflowInputSchema } from "@/lib/schemas";
-import type { EvalKit, WorkflowInput } from "@/types/eval-kit";
+import { getDefaultModel } from "@/lib/model-providers";
+import { generateRequestSchema, workflowInputSchema } from "@/lib/schemas";
+import type { EvalKit, GenerationProvider, GenerationSettings, WorkflowInput } from "@/types/eval-kit";
 
 const defaultForm: WorkflowInput = {
   workflowName: "",
@@ -22,7 +23,12 @@ const defaultForm: WorkflowInput = {
 export default function HomePage() {
   const [form, setForm] = useState<WorkflowInput>(defaultForm);
   const [evalKit, setEvalKit] = useState<EvalKit | null>(null);
-  const [mode, setMode] = useState<"mock" | "openai" | null>(null);
+  const [generation, setGeneration] = useState<GenerationSettings>({
+    provider: "mock",
+    model: getDefaultModel("mock")
+  });
+  const [provider, setProvider] = useState<GenerationProvider | null>(null);
+  const [model, setModel] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -35,11 +41,35 @@ export default function HomePage() {
     setError("");
   }
 
-  async function handleSubmit() {
-    const parsed = workflowInputSchema.safeParse(form);
+  function handleProviderChange(nextProvider: GenerationProvider) {
+    setGeneration({
+      provider: nextProvider,
+      model: getDefaultModel(nextProvider)
+    });
+  }
 
-    if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message || "Please complete the required fields.");
+  function handleModelChange(nextModel: string) {
+    setGeneration((current) => ({
+      ...current,
+      model: nextModel
+    }));
+  }
+
+  async function handleSubmit() {
+    const parsedInput = workflowInputSchema.safeParse(form);
+
+    if (!parsedInput.success) {
+      setError(parsedInput.error.issues[0]?.message || "Please complete the required fields.");
+      return;
+    }
+
+    const parsedRequest = generateRequestSchema.safeParse({
+      ...parsedInput.data,
+      generation
+    });
+
+    if (!parsedRequest.success) {
+      setError(parsedRequest.error.issues[0]?.message || "Please choose a valid provider and model.");
       return;
     }
 
@@ -52,21 +82,23 @@ export default function HomePage() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(parsed.data)
+        body: JSON.stringify(parsedRequest.data)
       });
 
       const payload = (await response.json()) as {
         error?: string;
         evalKit?: EvalKit;
-        mode?: "mock" | "openai";
+        provider?: GenerationProvider;
+        model?: string;
       };
 
-      if (!response.ok || !payload.evalKit || !payload.mode) {
+      if (!response.ok || !payload.evalKit || !payload.provider || !payload.model) {
         throw new Error(payload.error || "Generation failed.");
       }
 
       setEvalKit(payload.evalKit);
-      setMode(payload.mode);
+      setProvider(payload.provider);
+      setModel(payload.model);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Generation failed.");
     } finally {
@@ -94,8 +126,8 @@ export default function HomePage() {
               <p className="text-xs uppercase tracking-[0.24em] text-gold">Quick Start</p>
               <h2 className="mt-2 font-serif text-2xl">Load an example and generate in under a minute.</h2>
               <p className="mt-3 text-sm leading-6 text-white/75">
-                The app works in mock mode by default, and it can switch to OpenAI-backed generation automatically
-                when `OPENAI_API_KEY` is available.
+                Switch between mock, OpenAI, xAI, or any OpenAI-compatible endpoint without changing the app
+                architecture.
               </p>
               <div className="mt-5">
                 <ExampleButtons examples={exampleWorkflows} onLoadExample={loadExample} />
@@ -105,8 +137,17 @@ export default function HomePage() {
         </header>
 
         <div className="grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
-          <WorkflowForm form={form} isLoading={isLoading} error={error} onChange={updateField} onSubmit={handleSubmit} />
-          <ResultsPanel input={form} evalKit={evalKit} mode={mode} isLoading={isLoading} />
+          <WorkflowForm
+            form={form}
+            generation={generation}
+            isLoading={isLoading}
+            error={error}
+            onChange={updateField}
+            onProviderChange={handleProviderChange}
+            onModelChange={handleModelChange}
+            onSubmit={handleSubmit}
+          />
+          <ResultsPanel input={form} evalKit={evalKit} provider={provider} model={model} isLoading={isLoading} />
         </div>
       </div>
     </main>

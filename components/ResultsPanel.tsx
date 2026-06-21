@@ -2,17 +2,19 @@
 
 import { downloadTextFile } from "@/lib/export";
 import { evalKitToMarkdown } from "@/lib/markdown";
-import type { EvalKit, WorkflowInput } from "@/types/eval-kit";
+import { getProviderLabel } from "@/lib/model-providers";
+import type { EvalKit, GenerationProvider, WorkflowInput } from "@/types/eval-kit";
 import { SectionCard } from "@/components/SectionCard";
 
 type ResultsPanelProps = {
   input: WorkflowInput;
   evalKit: EvalKit | null;
-  mode: "mock" | "openai" | null;
+  provider: GenerationProvider | null;
+  model: string | null;
   isLoading: boolean;
 };
 
-export function ResultsPanel({ input, evalKit, mode, isLoading }: ResultsPanelProps) {
+export function ResultsPanel({ input, evalKit, provider, model, isLoading }: ResultsPanelProps) {
   if (isLoading) {
     return (
       <section className="rounded-[28px] border border-ink/10 bg-ink px-6 py-8 text-white shadow-card">
@@ -26,7 +28,7 @@ export function ResultsPanel({ input, evalKit, mode, isLoading }: ResultsPanelPr
     );
   }
 
-  if (!evalKit || !mode) {
+  if (!evalKit || !provider || !model) {
     return (
       <section className="grid-accent rounded-[28px] border border-dashed border-ink/15 bg-white/45 p-8">
         <p className="text-xs uppercase tracking-[0.24em] text-moss">Empty State</p>
@@ -39,8 +41,8 @@ export function ResultsPanel({ input, evalKit, mode, isLoading }: ResultsPanelPr
     );
   }
 
-  const jsonExport = JSON.stringify({ input, mode, evalKit }, null, 2);
-  const markdownExport = evalKitToMarkdown(input, evalKit, mode);
+  const jsonExport = JSON.stringify({ input, provider, model, evalKit }, null, 2);
+  const markdownExport = evalKitToMarkdown(input, evalKit, provider, model);
 
   return (
     <section className="space-y-5">
@@ -50,7 +52,9 @@ export function ResultsPanel({ input, evalKit, mode, isLoading }: ResultsPanelPr
             <p className="text-xs uppercase tracking-[0.24em] text-gold">Generated Kit</p>
             <h2 className="mt-2 font-serif text-3xl">{input.workflowName}</h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-white/75">
-              Ready for review, copy, and export. Current mode: <span className="font-semibold">{mode}</span>.
+              Ready for review, copy, and export. Current engine:{" "}
+              <span className="font-semibold">{getProviderLabel(provider)}</span> /{" "}
+              <span className="font-semibold">{model}</span>.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">

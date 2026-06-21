@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { generateEvalKit, getGeneratorErrorMessage } from "@/lib/generator";
-import { workflowInputSchema } from "@/lib/schemas";
+import { generateRequestSchema } from "@/lib/schemas";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const input = workflowInputSchema.parse(body);
-    const result = await generateEvalKit(input);
+    const payload = generateRequestSchema.parse(body);
+    const result = await generateEvalKit(payload, payload.generation);
 
     return NextResponse.json(result);
   } catch (error) {

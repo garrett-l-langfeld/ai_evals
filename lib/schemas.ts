@@ -11,6 +11,25 @@ export const workflowInputSchema = z.object({
   edgeCases: z.string().trim().optional()
 });
 
+export const generationSettingsSchema = z
+  .object({
+    provider: z.enum(["mock", "openai", "xai", "openai-compatible"]),
+    model: z.string().trim()
+  })
+  .superRefine((value, context) => {
+    if (value.provider !== "mock" && value.model.length === 0) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Model is required for non-mock providers.",
+        path: ["model"]
+      });
+    }
+  });
+
+export const generateRequestSchema = workflowInputSchema.extend({
+  generation: generationSettingsSchema
+});
+
 export const evalKitSchema = z.object({
   workflowSummary: z.object({
     summary: z.string(),
@@ -55,7 +74,8 @@ export const evalKitSchema = z.object({
 
 export const generateResponseSchema = z.object({
   evalKit: evalKitSchema,
-  mode: z.enum(["mock", "openai"])
+  provider: z.enum(["mock", "openai", "xai", "openai-compatible"]),
+  model: z.string()
 });
 
 export type WorkflowInputSchema = z.infer<typeof workflowInputSchema>;

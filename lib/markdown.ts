@@ -1,12 +1,18 @@
 import type { EvalKit, WorkflowInput } from "@/types/eval-kit";
 
-export function evalKitToMarkdown(input: WorkflowInput, evalKit: EvalKit, mode: string): string {
+export function evalKitToMarkdown(
+  input: WorkflowInput,
+  evalKit: EvalKit,
+  provider: string,
+  model: string
+): string {
   const summary = evalKit.workflowSummary;
 
   return [
     `# AI Eval Starter Kit: ${input.workflowName}`,
     "",
-    `Generated mode: ${mode}`,
+    `Generated provider: ${provider}`,
+    `Generated model: ${model}`,
     "",
     "## Workflow Input",
     `- Description: ${input.workflowDescription}`,

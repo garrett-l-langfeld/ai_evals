@@ -9,6 +9,13 @@ export type WorkflowInput = {
   edgeCases?: string;
 };
 
+export type GenerationProvider = "mock" | "openai" | "xai" | "openai-compatible";
+
+export type GenerationSettings = {
+  provider: GenerationProvider;
+  model: string;
+};
+
 export type EvalKit = {
   workflowSummary: {
     summary: string;
