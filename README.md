@@ -34,7 +34,16 @@ npm install
 cp .env.example .env.local
 ```
 
-3. Add credentials for any provider you want to use.
+3. Choose the generation engine in `.env.local`.
+
+Example using an OpenAI-compatible provider such as OpenRouter:
+
+```bash
+GENERATION_PROVIDER=openai-compatible
+GENERATION_MODEL=meta-llama/llama-3.3-8b-instruct:free
+```
+
+Then add credentials for the provider you want to use.
 
 For OpenAI:
 
@@ -75,7 +84,7 @@ The app supports four generation modes:
 - `xAI`: uses `XAI_API_KEY`
 - `OpenAI-compatible`: uses `COMPATIBLE_API_KEY` plus `COMPATIBLE_BASE_URL`
 
-Users choose the provider and model in the app UI. Secrets stay server-side in the Next.js API route and are never exposed in client-side code.
+The app reads the active provider and model from `.env.local`. Secrets stay server-side in the Next.js API route and are never exposed in client-side code.
 
 ### Important safety rules
 
@@ -84,19 +93,18 @@ Users choose the provider and model in the app UI. Secrets stay server-side in t
 - `.env.local` is already ignored by `.gitignore`.
 - Commit `.env.example` instead so other users know which variables to supply.
 
-If a provider is selected but its key or base URL is missing, the app shows a configuration error instead of silently switching engines.
+If the configured provider is missing a required key or base URL, the app shows a configuration error instead of silently switching engines.
 
 ## OpenAI-compatible providers
 
 The `OpenAI-compatible` option is intentionally generic. It can be used with services such as OpenRouter or any other provider that exposes an OpenAI-style chat completions API.
 
-If you want the UI to prefill a free OpenRouter model automatically, set:
+If you want to target a free OpenRouter model, set:
 
 ```bash
-NEXT_PUBLIC_COMPATIBLE_MODEL=meta-llama/llama-3.3-8b-instruct:free
+GENERATION_PROVIDER=openai-compatible
+GENERATION_MODEL=meta-llama/llama-3.3-8b-instruct:free
 ```
-
-Then choose `OpenAI-compatible` in the app and that model slug will already be filled in.
 
 If your compatible provider supports structured outputs reliably, set:
 
@@ -133,7 +141,7 @@ npm run build
 For a quick demo:
 
 1. Open the app.
-2. Pick `Mock` for a quota-free local demo, or choose a real provider and model.
+2. Set `GENERATION_PROVIDER=mock` for a quota-free local demo, or configure a real provider in `.env.local`.
 3. Load one of the built-in examples.
 4. Click `Generate Eval Kit`.
 

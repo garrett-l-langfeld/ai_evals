@@ -26,10 +26,6 @@ export const generationSettingsSchema = z
     }
   });
 
-export const generateRequestSchema = workflowInputSchema.extend({
-  generation: generationSettingsSchema
-});
-
 export const evalKitSchema = z.object({
   workflowSummary: z.object({
     summary: z.string(),

@@ -5,9 +5,8 @@ import { ExampleButtons } from "@/components/ExampleButtons";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { WorkflowForm } from "@/components/WorkflowForm";
 import { exampleWorkflows } from "@/lib/examples";
-import { getDefaultModel } from "@/lib/model-providers";
-import { generateRequestSchema, workflowInputSchema } from "@/lib/schemas";
-import type { EvalKit, GenerationProvider, GenerationSettings, WorkflowInput } from "@/types/eval-kit";
+import { workflowInputSchema } from "@/lib/schemas";
+import type { EvalKit, GenerationProvider, WorkflowInput } from "@/types/eval-kit";
 
 const defaultForm: WorkflowInput = {
   workflowName: "",
@@ -23,10 +22,6 @@ const defaultForm: WorkflowInput = {
 export default function HomePage() {
   const [form, setForm] = useState<WorkflowInput>(defaultForm);
   const [evalKit, setEvalKit] = useState<EvalKit | null>(null);
-  const [generation, setGeneration] = useState<GenerationSettings>({
-    provider: "mock",
-    model: getDefaultModel("mock")
-  });
   const [provider, setProvider] = useState<GenerationProvider | null>(null);
   const [model, setModel] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,35 +36,11 @@ export default function HomePage() {
     setError("");
   }
 
-  function handleProviderChange(nextProvider: GenerationProvider) {
-    setGeneration({
-      provider: nextProvider,
-      model: getDefaultModel(nextProvider)
-    });
-  }
-
-  function handleModelChange(nextModel: string) {
-    setGeneration((current) => ({
-      ...current,
-      model: nextModel
-    }));
-  }
-
   async function handleSubmit() {
     const parsedInput = workflowInputSchema.safeParse(form);
 
     if (!parsedInput.success) {
       setError(parsedInput.error.issues[0]?.message || "Please complete the required fields.");
-      return;
-    }
-
-    const parsedRequest = generateRequestSchema.safeParse({
-      ...parsedInput.data,
-      generation
-    });
-
-    if (!parsedRequest.success) {
-      setError(parsedRequest.error.issues[0]?.message || "Please choose a valid provider and model.");
       return;
     }
 
@@ -82,7 +53,7 @@ export default function HomePage() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(parsedRequest.data)
+        body: JSON.stringify(parsedInput.data)
       });
 
       const payload = (await response.json()) as {
@@ -124,27 +95,8 @@ export default function HomePage() {
               <h2 className="mt-3 max-w-md font-serif text-[2rem] leading-tight">
                 Load an example and generate in under a minute.
               </h2>
-              <p className="mt-4 text-sm leading-7 text-white/68">
-                Switch between mock, OpenAI, xAI, or any OpenAI-compatible endpoint without changing the app
-                architecture.
-              </p>
-              <div className="mt-6">
+              <div className="mt-5">
                 <ExampleButtons examples={exampleWorkflows} onLoadExample={loadExample} />
-              </div>
-              <div className="soft-divider mt-7" />
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                <div>
-                  <p className="text-2xl font-semibold text-white">3</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/52">Starter Workflows</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-semibold text-white">4</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/52">Generation Modes</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-semibold text-white">2</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/52">Export Formats</p>
-                </div>
               </div>
             </div>
           </div>
@@ -153,12 +105,9 @@ export default function HomePage() {
         <div className="grid gap-7 xl:grid-cols-[0.92fr_1.08fr]">
           <WorkflowForm
             form={form}
-            generation={generation}
             isLoading={isLoading}
             error={error}
             onChange={updateField}
-            onProviderChange={handleProviderChange}
-            onModelChange={handleModelChange}
             onSubmit={handleSubmit}
           />
           <ResultsPanel input={form} evalKit={evalKit} provider={provider} model={model} isLoading={isLoading} />

@@ -1,16 +1,12 @@
 "use client";
 
-import { getProviderLabel, providerOptions } from "@/lib/model-providers";
-import type { GenerationProvider, GenerationSettings, WorkflowInput } from "@/types/eval-kit";
+import type { WorkflowInput } from "@/types/eval-kit";
 
 type WorkflowFormProps = {
   form: WorkflowInput;
-  generation: GenerationSettings;
   isLoading: boolean;
   error?: string;
   onChange: (field: keyof WorkflowInput, value: string) => void;
-  onProviderChange: (provider: GenerationProvider) => void;
-  onModelChange: (model: string) => void;
   onSubmit: () => void;
 };
 
@@ -70,12 +66,9 @@ const fields: Array<{
 
 export function WorkflowForm({
   form,
-  generation,
   isLoading,
   error,
   onChange,
-  onProviderChange,
-  onModelChange,
   onSubmit
 }: WorkflowFormProps) {
   return (
@@ -88,46 +81,6 @@ export function WorkflowForm({
         <p className="mt-4 max-w-2xl text-sm leading-7 text-white/68">
           Start with the core description, then add optional context to sharpen the generated success criteria,
           failure modes, and starter dataset.
-        </p>
-      </div>
-
-      <div className="mb-7 rounded-[24px] border border-ink/8 bg-fog/72 p-5">
-        <p className="editorial-kicker text-[11px] uppercase text-moss">Model Engine</p>
-        <div className="mt-4 grid gap-4 md:grid-cols-[0.85fr_1.15fr]">
-          <label>
-            <span className="mb-2 block text-sm font-semibold text-[#b6c4d2]">Provider</span>
-            <select
-              value={generation.provider}
-              onChange={(event) => onProviderChange(event.target.value as GenerationProvider)}
-              className="w-full rounded-[18px] border border-ink/10 bg-white/96 px-4 py-3 text-sm text-ink outline-none transition focus:border-moss focus:ring-2 focus:ring-moss/15"
-            >
-              {providerOptions.map((option) => (
-                <option
-                  key={option.value}
-                  value={option.value}
-                >
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label>
-            <span className="mb-2 block text-sm font-semibold text-[#b6c4d2]">Model</span>
-            <input
-              value={generation.model}
-              onChange={(event) => onModelChange(event.target.value)}
-              disabled={generation.provider === "mock"}
-              placeholder={providerOptions.find((option) => option.value === generation.provider)?.defaultModel}
-              className="w-full rounded-[18px] border border-ink/10 bg-white/96 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15 disabled:cursor-not-allowed disabled:bg-white/60"
-            />
-          </label>
-        </div>
-        <p className="mt-3 text-sm leading-7 text-white/68">
-          {providerOptions.find((option) => option.value === generation.provider)?.description}
-        </p>
-        <p className="mt-3 text-xs uppercase tracking-[0.18em] text-white/52">
-          Active engine: {getProviderLabel(generation.provider)} / {generation.model}
         </p>
       </div>
 
