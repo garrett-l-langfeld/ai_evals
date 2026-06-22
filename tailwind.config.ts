@@ -8,22 +8,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#112334",
-        sand: "#f7f3ea",
-        ember: "#c86c4b",
-        moss: "#667d70",
-        gold: "#d7c29a",
-        paper: "#fffdf8",
-        slate: "#5e6b75",
-        fog: "#edf0ea"
+        ink: "#14263a",
+        sand: "#161f2e",
+        ember: "#b86f4d",
+        moss: "#6f7f73",
+        gold: "#d3bea0",
+        paper: "#f6f2ea",
+        slate: "#5f6d79",
+        fog: "#e8ece8"
       },
       boxShadow: {
-        card: "0 22px 60px rgba(17, 35, 52, 0.08)",
-        panel: "0 28px 90px rgba(17, 35, 52, 0.12)"
+        card: "0 18px 48px rgba(20, 38, 58, 0.08)",
+        panel: "0 24px 76px rgba(20, 38, 58, 0.12)"
       },
       fontFamily: {
-        sans: ["Avenir Next", "Segoe UI", "Helvetica Neue", "Arial", "sans-serif"],
-        serif: ["Canela", "Iowan Old Style", "Georgia", "Times New Roman", "serif"]
+        sans: ["Avenir Next", "Helvetica Neue", "Segoe UI", "Arial", "sans-serif"],
+        serif: ["Iowan Old Style", "Baskerville", "Georgia", "Times New Roman", "serif"]
       }
     }
   },

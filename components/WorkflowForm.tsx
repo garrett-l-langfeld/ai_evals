@@ -79,27 +79,27 @@ export function WorkflowForm({
   onSubmit
 }: WorkflowFormProps) {
   return (
-    <section className="rounded-[36px] border border-ink/8 bg-paper/88 p-7 shadow-panel backdrop-blur-sm">
+    <section className="rounded-[30px] border border-ink/8 bg-paper/92 p-7 shadow-card backdrop-blur-sm">
       <div className="mb-8">
         <p className="editorial-kicker text-[11px] uppercase text-moss">Workflow Intake</p>
-        <h2 className="mt-3 max-w-2xl font-serif text-[2.4rem] leading-tight text-ink">
-          Describe the system, then shape the evaluation around what matters.
+        <h2 className="mt-3 max-w-2xl font-serif text-[2.15rem] leading-tight text-[#d1dbe5]">
+          Describe the system, then shape the evaluation around what matters most.
         </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate">
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-white/68">
           Start with the core description, then add optional context to sharpen the generated success criteria,
           failure modes, and starter dataset.
         </p>
       </div>
 
-      <div className="mb-7 rounded-[28px] border border-ink/8 bg-fog/80 p-5">
+      <div className="mb-7 rounded-[24px] border border-ink/8 bg-fog/72 p-5">
         <p className="editorial-kicker text-[11px] uppercase text-moss">Model Engine</p>
         <div className="mt-4 grid gap-4 md:grid-cols-[0.85fr_1.15fr]">
           <label>
-            <span className="mb-2 block text-sm font-semibold text-ink">Provider</span>
+            <span className="mb-2 block text-sm font-semibold text-[#b6c4d2]">Provider</span>
             <select
               value={generation.provider}
               onChange={(event) => onProviderChange(event.target.value as GenerationProvider)}
-              className="w-full rounded-[20px] border border-ink/10 bg-white/95 px-4 py-3 text-sm text-ink outline-none transition focus:border-moss focus:ring-2 focus:ring-moss/15"
+              className="w-full rounded-[18px] border border-ink/10 bg-white/96 px-4 py-3 text-sm text-ink outline-none transition focus:border-moss focus:ring-2 focus:ring-moss/15"
             >
               {providerOptions.map((option) => (
                 <option
@@ -113,20 +113,20 @@ export function WorkflowForm({
           </label>
 
           <label>
-            <span className="mb-2 block text-sm font-semibold text-ink">Model</span>
+            <span className="mb-2 block text-sm font-semibold text-[#b6c4d2]">Model</span>
             <input
               value={generation.model}
               onChange={(event) => onModelChange(event.target.value)}
               disabled={generation.provider === "mock"}
               placeholder={providerOptions.find((option) => option.value === generation.provider)?.defaultModel}
-              className="w-full rounded-[20px] border border-ink/10 bg-white/95 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15 disabled:cursor-not-allowed disabled:bg-white/60"
+              className="w-full rounded-[18px] border border-ink/10 bg-white/96 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15 disabled:cursor-not-allowed disabled:bg-white/60"
             />
           </label>
         </div>
-        <p className="mt-3 text-sm leading-7 text-slate">
+        <p className="mt-3 text-sm leading-7 text-white/68">
           {providerOptions.find((option) => option.value === generation.provider)?.description}
         </p>
-        <p className="mt-3 text-xs uppercase tracking-[0.18em] text-slate/70">
+        <p className="mt-3 text-xs uppercase tracking-[0.18em] text-white/52">
           Active engine: {getProviderLabel(generation.provider)} / {generation.model}
         </p>
       </div>
@@ -137,7 +137,7 @@ export function WorkflowForm({
             key={field.key}
             className={field.multiline ? "md:col-span-2" : ""}
           >
-            <span className="mb-2 block text-sm font-semibold text-ink">
+            <span className="mb-2 block text-sm font-semibold text-[#b6c4d2]">
               {field.label}
               {field.required ? " *" : ""}
             </span>
@@ -147,14 +147,14 @@ export function WorkflowForm({
                 value={form[field.key] || ""}
                 onChange={(event) => onChange(field.key, event.target.value)}
                 placeholder={field.placeholder}
-                className="min-h-28 w-full rounded-[22px] border border-ink/10 bg-white/96 px-5 py-4 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15"
+                className="min-h-28 w-full rounded-[20px] border border-ink/10 bg-white/97 px-5 py-4 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15"
               />
             ) : (
               <input
                 value={form[field.key] || ""}
                 onChange={(event) => onChange(field.key, event.target.value)}
                 placeholder={field.placeholder}
-                className="w-full rounded-[22px] border border-ink/10 bg-white/96 px-5 py-4 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15"
+                className="w-full rounded-[20px] border border-ink/10 bg-white/97 px-5 py-4 text-sm text-ink outline-none transition placeholder:text-slate/45 focus:border-moss focus:ring-2 focus:ring-moss/15"
               />
             )}
           </label>
@@ -171,7 +171,7 @@ export function WorkflowForm({
           type="button"
           onClick={onSubmit}
           disabled={isLoading}
-          className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#1a3044] disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-full border border-[#f0e2c6]/70 bg-[#e2cfaa] px-7 py-3.5 text-sm font-semibold text-[#15283b] shadow-[0_10px_28px_rgba(211,190,160,0.28)] transition hover:-translate-y-0.5 hover:bg-[#eddabc] hover:shadow-[0_14px_32px_rgba(211,190,160,0.34)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? "Generating..." : "Generate Eval Kit"}
         </button>

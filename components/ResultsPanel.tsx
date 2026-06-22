@@ -17,9 +17,9 @@ type ResultsPanelProps = {
 export function ResultsPanel({ input, evalKit, provider, model, isLoading }: ResultsPanelProps) {
   if (isLoading) {
     return (
-      <section className="rounded-[36px] border border-ink/8 bg-ink px-7 py-9 text-white shadow-panel">
-        <p className="editorial-kicker text-[11px] uppercase text-[#d7c29a]">Generating</p>
-        <h2 className="mt-3 font-serif text-[2.4rem] leading-tight">Building your starter eval kit...</h2>
+      <section className="rounded-[30px] border border-ink/8 bg-ink px-7 py-9 text-white shadow-panel">
+        <p className="editorial-kicker text-[11px] uppercase text-gold">Generating</p>
+        <h2 className="mt-3 font-serif text-[2.1rem] leading-tight">Building your starter eval kit...</h2>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72">
           We&apos;re drafting success criteria, failure modes, starter test cases, a rubric, and export-ready
           artifacts.
@@ -30,12 +30,12 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
 
   if (!evalKit || !provider || !model) {
     return (
-      <section className="grid-accent rounded-[36px] border border-dashed border-ink/15 bg-white/38 p-8 shadow-card">
+      <section className="grid-accent rounded-[30px] border border-dashed border-ink/15 bg-white/40 p-8 shadow-card">
         <p className="editorial-kicker text-[11px] uppercase text-moss">Empty State</p>
-        <h2 className="mt-4 max-w-3xl font-serif text-[3.4rem] leading-[0.95] text-ink">
+        <h2 className="mt-4 max-w-3xl font-serif text-[3rem] leading-[0.96] text-ink">
           Your eval kit will appear here.
         </h2>
-        <p className="mt-6 max-w-2xl text-base leading-8 text-slate">
+        <p className="mt-6 max-w-2xl text-base leading-8 text-[#28405a]">
           Load one of the example workflows or describe your own AI system above, then generate a starter package
           you can review and export.
         </p>
@@ -48,11 +48,11 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
 
   return (
     <section className="space-y-5">
-      <div className="hero-sheen rounded-[36px] border border-ink/8 bg-ink px-7 py-7 text-white shadow-panel">
+      <div className="hero-sheen rounded-[30px] border border-ink/8 bg-ink px-7 py-7 text-white shadow-panel">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="relative z-10">
-            <p className="editorial-kicker text-[11px] uppercase text-[#d7c29a]">Generated Kit</p>
-            <h2 className="mt-3 max-w-3xl font-serif text-[2.7rem] leading-tight">{input.workflowName}</h2>
+            <p className="editorial-kicker text-[11px] uppercase text-gold">Generated Kit</p>
+            <h2 className="mt-3 max-w-3xl font-serif text-[2.35rem] leading-tight">{input.workflowName}</h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72">
               Ready for review, copy, and export. Current engine:{" "}
               <span className="font-semibold">{getProviderLabel(provider)}</span> /{" "}
@@ -63,7 +63,7 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
             <button
               type="button"
               onClick={() => downloadTextFile("eval-kit.json", jsonExport, "application/json")}
-              className="rounded-full bg-[#e8d9b8] px-4 py-2 text-sm font-semibold text-ink transition hover:-translate-y-0.5 hover:bg-[#efe2c6]"
+              className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-ink transition hover:-translate-y-0.5 hover:bg-[#dcc8a9]"
             >
               Export JSON
             </button>
@@ -82,7 +82,7 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
         <p>{evalKit.workflowSummary.summary}</p>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           <div>
-            <p className="font-semibold text-ink">Input Assumptions</p>
+            <p className="font-semibold text-[#edf2f7]">Input Assumptions</p>
             <ul className="mt-2 space-y-2">
               {evalKit.workflowSummary.inputAssumptions.map((item) => (
                 <li key={item}>• {item}</li>
@@ -90,7 +90,7 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
             </ul>
           </div>
           <div>
-            <p className="font-semibold text-ink">Output Assumptions</p>
+            <p className="font-semibold text-[#edf2f7]">Output Assumptions</p>
             <ul className="mt-2 space-y-2">
               {evalKit.workflowSummary.outputAssumptions.map((item) => (
                 <li key={item}>• {item}</li>
@@ -98,7 +98,7 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
             </ul>
           </div>
           <div>
-            <p className="font-semibold text-ink">Evaluation Focus</p>
+            <p className="font-semibold text-[#edf2f7]">Evaluation Focus</p>
             <ul className="mt-2 space-y-2">
               {evalKit.workflowSummary.evalFocus.map((item) => (
                 <li key={item}>• {item}</li>
@@ -131,14 +131,14 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
           {evalKit.testCases.map((testCase) => (
             <article
               key={testCase.id}
-              className="rounded-[24px] border border-ink/8 bg-fog/72 p-5"
+              className="rounded-[22px] border border-white/10 bg-white/6 p-5"
             >
-              <p className="text-xs uppercase tracking-[0.18em] text-moss">{testCase.id}</p>
-              <h4 className="mt-3 text-base font-semibold text-ink">{testCase.title}</h4>
-              <p className="mt-2 text-sm leading-7 text-slate">{testCase.scenario}</p>
-              <p className="mt-4 text-sm leading-7"><span className="font-semibold text-ink">Sample input:</span> {testCase.sampleInput}</p>
-              <p className="mt-2 text-sm leading-7"><span className="font-semibold text-ink">Expected behavior:</span> {testCase.expectedBehavior}</p>
-              <p className="mt-2 text-sm leading-7"><span className="font-semibold text-ink">Primary risk:</span> {testCase.primaryRisk}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-gold">{testCase.id}</p>
+              <h4 className="mt-3 text-base font-semibold text-[#edf2f7]">{testCase.title}</h4>
+              <p className="mt-2 text-sm leading-7 text-white/72">{testCase.scenario}</p>
+              <p className="mt-4 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">Sample input:</span> {testCase.sampleInput}</p>
+              <p className="mt-2 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">Expected behavior:</span> {testCase.expectedBehavior}</p>
+              <p className="mt-2 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">Primary risk:</span> {testCase.primaryRisk}</p>
             </article>
           ))}
         </div>
@@ -150,17 +150,17 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
             {evalKit.graderRubric.map((dimension) => (
               <article
                 key={dimension.name}
-                className="rounded-[24px] border border-ink/8 bg-fog/55 p-5"
+                className="rounded-[22px] border border-white/10 bg-white/6 p-5"
               >
                 <div className="flex items-center justify-between gap-4">
-                  <h4 className="text-base font-semibold text-ink">{dimension.name}</h4>
-                  <span className="rounded-full bg-[#e8d9b8] px-3 py-1 text-xs font-semibold text-ink">
+                  <h4 className="text-base font-semibold text-[#edf2f7]">{dimension.name}</h4>
+                  <span className="rounded-full bg-gold px-3 py-1 text-xs font-semibold text-ink">
                     {dimension.scaleMin}-{dimension.scaleMax}
                   </span>
                 </div>
-                <p className="mt-3 text-sm leading-7 text-slate">{dimension.description}</p>
-                <p className="mt-4 text-sm leading-7"><span className="font-semibold text-ink">High score:</span> {dimension.highScoreMeaning}</p>
-                <p className="mt-2 text-sm leading-7"><span className="font-semibold text-ink">Low score:</span> {dimension.lowScoreMeaning}</p>
+                <p className="mt-3 text-sm leading-7 text-white/72">{dimension.description}</p>
+                <p className="mt-4 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">High score:</span> {dimension.highScoreMeaning}</p>
+                <p className="mt-2 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">Low score:</span> {dimension.lowScoreMeaning}</p>
               </article>
             ))}
           </div>
