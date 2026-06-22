@@ -136,7 +136,7 @@ export function buildMockEvalKit(input: WorkflowInput): EvalKit {
     const scenario = choose(scenarioPool, seed, index);
 
     return {
-      id: `TC-${String(index + 1).padStart(2, "0")}`,
+      id: `TC-${index + 1}`,
       title: `${scenario.title} for ${input.workflowName}`,
       scenario: scenario.scenario,
       sampleInput: `Sample ${inputType.toLowerCase()} for ${input.workflowName}: case ${index + 1} includes realistic operational detail, one subtle risk, and reviewer-relevant context.`,

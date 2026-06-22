@@ -228,7 +228,7 @@ function repairEvalKit(candidate: unknown, input: WorkflowInput): EvalKit {
       const backup = fallback.testCases[index % fallback.testCases.length];
 
       return {
-        id: toText(record.id, backup.id),
+        id: `TC-${index + 1}`,
         title: toText(record.title, backup.title),
         scenario: toText(record.scenario, backup.scenario),
         sampleInput: toText(record.sampleInput, backup.sampleInput),
@@ -300,6 +300,11 @@ function repairEvalKit(candidate: unknown, input: WorkflowInput): EvalKit {
   if (repaired.graderRubric.length < 4) {
     repaired.graderRubric = fallback.graderRubric;
   }
+
+  repaired.testCases = repaired.testCases.map((testCase, index) => ({
+    ...testCase,
+    id: `TC-${index + 1}`
+  }));
 
   return evalKitSchema.parse(repaired);
 }
