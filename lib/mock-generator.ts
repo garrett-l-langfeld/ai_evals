@@ -45,6 +45,74 @@ function buildDatasetSchema(workflowName: string) {
   };
 }
 
+function buildSampleInputText(
+  workflowName: string,
+  inputType: string,
+  outputType: string,
+  userType: string,
+  scenarioTitle: string,
+  index: number
+) {
+  const lowerInput = inputType.toLowerCase();
+  const lowerOutput = outputType.toLowerCase();
+  const lowerUser = userType.toLowerCase();
+
+  switch (scenarioTitle) {
+    case "Typical high-signal request":
+      return `A realistic ${lowerInput} with one primary issue, explicit facts, and enough context for the ${lowerUser} to expect a clear ${lowerOutput}.`;
+    case "Multiple competing issues":
+      return `A single ${lowerInput} that mixes two valid problems, forcing ${workflowName} to decide what belongs in the main ${lowerOutput} versus secondary notes.`;
+    case "Ambiguous source material":
+      return `A partially conflicting ${lowerInput} where one important detail is implied but not confirmed, so the ${lowerOutput} should signal uncertainty.`;
+    case "Missing key field":
+      return `A ${lowerInput} missing one required operational detail, such as timestamp, account identifier, or final user intent, while still requesting a confident answer.`;
+    case "Noisy or adversarial phrasing":
+      return `A messy ${lowerInput} with sarcasm, irrelevant filler, and one genuinely important fact that the ${lowerUser} still needs surfaced in the ${lowerOutput}.`;
+    case "Format-sensitive downstream consumer":
+      return `A ${lowerInput} destined for a downstream workflow that expects consistent fields, stable terminology, and no extra prose outside the ${lowerOutput}.`;
+    case "Long context compression":
+      return `A long ${lowerInput} with repeated details, one buried operational blocker, and enough volume that ${workflowName} must compress carefully.`;
+    case "Low-confidence recommendation":
+      return `A ${lowerInput} where evidence supports a tentative next step but not a definitive resolution, requiring the ${lowerOutput} to stay useful without overstating confidence.`;
+    case "Conflicting signals":
+      return `A ${lowerInput} where one section suggests normal handling but another suggests elevated risk, and the ${lowerOutput} must surface the conflict instead of smoothing it over.`;
+    case "Edge-case stakeholder need":
+      return `A specialized ${lowerInput} reviewed by an exacting stakeholder who cares about precision, terminology, and whether the ${lowerOutput} is immediately audit-ready.`;
+    default:
+      return `Sample ${lowerInput} for ${workflowName}: case ${index + 1} should test whether the ${lowerOutput} remains useful for the ${lowerUser}.`;
+  }
+}
+
+function buildExpectedBehaviorText(outputType: string, userType: string, scenarioTitle: string) {
+  const lowerOutput = outputType.toLowerCase();
+  const lowerUser = userType.toLowerCase();
+
+  switch (scenarioTitle) {
+    case "Typical high-signal request":
+      return `Return ${lowerOutput} that captures the main issue accurately, preserves the highest-priority facts, and is immediately actionable for the ${lowerUser}.`;
+    case "Multiple competing issues":
+      return `Return ${lowerOutput} that represents both issues, prioritizes the more urgent one correctly, and does not hide the secondary concern.`;
+    case "Ambiguous source material":
+      return `Return ${lowerOutput} that separates confirmed facts from uncertain inferences and explicitly marks what still needs verification.`;
+    case "Missing key field":
+      return `Return ${lowerOutput} that avoids guessing the missing detail, notes the gap clearly, and still extracts the grounded information that is present.`;
+    case "Noisy or adversarial phrasing":
+      return `Return ${lowerOutput} that filters out irrelevant or manipulative wording while preserving the real operational signal.`;
+    case "Format-sensitive downstream consumer":
+      return `Return ${lowerOutput} in a consistent structure so a downstream system or reviewer can parse it without manual cleanup.`;
+    case "Long context compression":
+      return `Return ${lowerOutput} that compresses aggressively without losing the buried blocker, core chronology, or next-action detail.`;
+    case "Low-confidence recommendation":
+      return `Return ${lowerOutput} that offers a cautious recommendation only where justified and communicates confidence limits clearly.`;
+    case "Conflicting signals":
+      return `Return ${lowerOutput} that highlights the disagreement in the source and avoids presenting a false single interpretation.`;
+    case "Edge-case stakeholder need":
+      return `Return ${lowerOutput} that is precise, reviewer-friendly, and detailed enough for a specialist ${lowerUser} to trust it on first pass.`;
+    default:
+      return `Return ${lowerOutput} that remains useful for the ${lowerUser} and stays grounded in the source material.`;
+  }
+}
+
 export function buildMockEvalKit(input: WorkflowInput): EvalKit {
   const seed = hashString(`${input.workflowName}:${input.workflowDescription}`);
   const subject = input.workflowName.toLowerCase();
@@ -139,8 +207,8 @@ export function buildMockEvalKit(input: WorkflowInput): EvalKit {
       id: `TC-${index + 1}`,
       title: `${scenario.title} for ${input.workflowName}`,
       scenario: scenario.scenario,
-      sampleInput: `Sample ${inputType.toLowerCase()} for ${input.workflowName}: case ${index + 1} includes realistic operational detail, one subtle risk, and reviewer-relevant context.`,
-      expectedBehavior: `The system should produce ${outputType.toLowerCase()} that captures the key facts, notes uncertainty where appropriate, and remains useful for the ${userType.toLowerCase()}.`,
+      sampleInput: buildSampleInputText(input.workflowName, inputType, outputType, userType, scenario.title, index),
+      expectedBehavior: buildExpectedBehaviorText(outputType, userType, scenario.title),
       primaryRisk: scenario.risk
     };
   });

@@ -174,6 +174,10 @@ function toText(value: unknown, fallback = ""): string {
     return value.trim();
   }
 
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
   if (Array.isArray(value)) {
     return value
       .flatMap((item) => {
@@ -191,11 +195,36 @@ function toText(value: unknown, fallback = ""): string {
       .join("\n");
   }
 
+  if (typeof value === "object" && value !== null) {
+    try {
+      return JSON.stringify(value, null, 2).trim();
+    } catch {
+      return fallback;
+    }
+  }
+
   if (value == null) {
     return fallback;
   }
 
   return String(value).trim() || fallback;
+}
+
+function normalizeComparableText(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function isPlaceholderLike(value: string): boolean {
+  const normalized = normalizeComparableText(value);
+
+  return (
+    normalized.length === 0 ||
+    normalized === "[object object]" ||
+    normalized.includes('"type"') ||
+    normalized.includes('"value"') ||
+    normalized.includes("sample input") ||
+    normalized.includes("expected behavior")
+  );
 }
 
 function toStringArray(value: unknown, fallback: string[]): string[] {
@@ -242,13 +271,15 @@ function repairEvalKit(candidate: unknown, input: WorkflowInput): EvalKit {
     ...testCaseSource.map((item, index) => {
       const record = typeof item === "object" && item !== null ? (item as Record<string, unknown>) : {};
       const backup = fallback.testCases[index % fallback.testCases.length];
+      const sampleInput = toText(record.sampleInput, backup.sampleInput);
+      const expectedBehavior = toText(record.expectedBehavior, backup.expectedBehavior);
 
       return {
         id: `TC-${index + 1}`,
         title: toText(record.title, backup.title),
         scenario: toText(record.scenario, backup.scenario),
-        sampleInput: toText(record.sampleInput, backup.sampleInput),
-        expectedBehavior: toText(record.expectedBehavior, backup.expectedBehavior),
+        sampleInput: isPlaceholderLike(sampleInput) ? backup.sampleInput : sampleInput,
+        expectedBehavior: isPlaceholderLike(expectedBehavior) ? backup.expectedBehavior : expectedBehavior,
         primaryRisk: toText(record.primaryRisk, backup.primaryRisk)
       };
     }),
@@ -321,6 +352,36 @@ function repairEvalKit(candidate: unknown, input: WorkflowInput): EvalKit {
     ...testCase,
     id: `TC-${index + 1}`
   }));
+
+  const sampleInputCounts = new Map<string, number>();
+  const expectedBehaviorCounts = new Map<string, number>();
+
+  for (const testCase of repaired.testCases) {
+    const normalizedSampleInput = normalizeComparableText(testCase.sampleInput);
+    sampleInputCounts.set(normalizedSampleInput, (sampleInputCounts.get(normalizedSampleInput) || 0) + 1);
+
+    const normalizedExpectedBehavior = normalizeComparableText(testCase.expectedBehavior);
+    expectedBehaviorCounts.set(normalizedExpectedBehavior, (expectedBehaviorCounts.get(normalizedExpectedBehavior) || 0) + 1);
+  }
+
+  repaired.testCases = repaired.testCases.map((testCase, index) => {
+    const backup = fallback.testCases[index % fallback.testCases.length];
+    const normalizedSampleInput = normalizeComparableText(testCase.sampleInput);
+    const normalizedExpectedBehavior = normalizeComparableText(testCase.expectedBehavior);
+
+    return {
+      ...testCase,
+      sampleInput:
+        (sampleInputCounts.get(normalizedSampleInput) || 0) > 1 && normalizedSampleInput === normalizeComparableText(backup.sampleInput)
+          ? backup.sampleInput
+          : testCase.sampleInput,
+      expectedBehavior:
+        (expectedBehaviorCounts.get(normalizedExpectedBehavior) || 0) > 1 &&
+        normalizedExpectedBehavior === normalizeComparableText(backup.expectedBehavior)
+          ? backup.expectedBehavior
+          : testCase.expectedBehavior
+    };
+  });
 
   return evalKitSchema.parse(repaired);
 }
