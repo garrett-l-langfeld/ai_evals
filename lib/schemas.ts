@@ -13,7 +13,7 @@ export const workflowInputSchema = z.object({
 
 export const generationSettingsSchema = z
   .object({
-    provider: z.enum(["mock", "openai", "xai", "openai-compatible"]),
+    provider: z.enum(["mock", "openai", "xai", "anthropic", "gemini", "openai-compatible"]),
     model: z.string().trim()
   })
   .superRefine((value, context) => {
@@ -70,7 +70,7 @@ export const evalKitSchema = z.object({
 
 export const generateResponseSchema = z.object({
   evalKit: evalKitSchema,
-  provider: z.enum(["mock", "openai", "xai", "openai-compatible"]),
+  provider: z.enum(["mock", "openai", "xai", "anthropic", "gemini", "openai-compatible"]),
   model: z.string()
 });
 

@@ -19,6 +19,9 @@ export function buildGeneratorPrompt(input: WorkflowInput): string {
     "- successCriteria: 5 to 8 concise criteria",
     "- failureModes: 6 to 10 realistic failure modes",
     "- testCases: 8 to 12 objects with id, title, scenario, sampleInput, expectedBehavior, primaryRisk",
+    "- sampleInput and expectedBehavior must each be plain strings, not nested objects or arrays",
+    "- make each test case materially different; avoid repeating the same sampleInput or expectedBehavior across cases",
+    "- sampleInput should look like a concrete example the workflow could receive, not a placeholder template label",
     "- graderRubric: 4 to 6 objects with name, description, scaleMin, scaleMax, highScoreMeaning, lowScoreMeaning",
     "- evalDatasetSchema: a starter JSON schema with id, workflow_name, input, expected_output, risk_tags, grader_notes, score_dimensions"
   ].join("\n");

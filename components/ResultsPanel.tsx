@@ -19,7 +19,17 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
     return (
       <section className="rounded-[30px] border border-ink/8 bg-ink px-7 py-9 text-white shadow-panel">
         <p className="editorial-kicker text-[11px] uppercase text-gold">Generating</p>
-        <h2 className="mt-3 font-serif text-[2.1rem] leading-tight">Building your starter eval kit...</h2>
+        <div className="mt-3 flex flex-wrap items-end gap-3">
+          <h2 className="font-serif text-[2.1rem] leading-tight">Building your starter eval kit</h2>
+          <div
+            className="loading-dots mb-2"
+            aria-hidden="true"
+          >
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72">
           We&apos;re drafting success criteria, failure modes, starter test cases, a rubric, and export-ready
           artifacts.

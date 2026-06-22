@@ -25,6 +25,18 @@ export const providerOptions: Array<{
     defaultModel: "grok-4-fast-reasoning"
   },
   {
+    value: "anthropic",
+    label: "Anthropic",
+    description: "Use an Anthropic API key and a Claude model such as claude-3-7-sonnet-latest.",
+    defaultModel: "claude-3-7-sonnet-latest"
+  },
+  {
+    value: "gemini",
+    label: "Gemini",
+    description: "Use a Google AI Studio key and a Gemini model such as gemini-2.5-flash.",
+    defaultModel: "gemini-2.5-flash"
+  },
+  {
     value: "openai-compatible",
     label: "OpenAI-Compatible",
     description: "Use any OpenAI-compatible base URL such as OpenRouter or another gateway.",
@@ -54,7 +66,7 @@ export function resolveConfiguredGeneration(): { provider: GenerationProvider; m
   if (configuredProvider) {
     if (!isGenerationProvider(configuredProvider)) {
       throw new Error(
-        `Invalid GENERATION_PROVIDER "${configuredProvider}" in .env.local. Use mock, openai, xai, or openai-compatible.`
+        `Invalid GENERATION_PROVIDER "${configuredProvider}" in .env.local. Use mock, openai, xai, anthropic, gemini, or openai-compatible.`
       );
     }
 
@@ -69,6 +81,8 @@ export function resolveConfiguredGeneration(): { provider: GenerationProvider; m
       process.env.GENERATION_MODEL?.trim() ||
       (configuredProvider === "openai" ? process.env.OPENAI_MODEL?.trim() : "") ||
       (configuredProvider === "xai" ? process.env.XAI_MODEL?.trim() : "") ||
+      (configuredProvider === "anthropic" ? process.env.ANTHROPIC_MODEL?.trim() : "") ||
+      (configuredProvider === "gemini" ? process.env.GEMINI_MODEL?.trim() : "") ||
       (configuredProvider === "openai-compatible"
         ? process.env.COMPATIBLE_MODEL?.trim() || process.env.NEXT_PUBLIC_COMPATIBLE_MODEL?.trim()
         : "") ||
@@ -102,6 +116,21 @@ export function resolveConfiguredGeneration(): { provider: GenerationProvider; m
     return {
       provider: "xai",
       model: process.env.GENERATION_MODEL?.trim() || process.env.XAI_MODEL?.trim() || "grok-4-fast-reasoning"
+    };
+  }
+
+  if (process.env.ANTHROPIC_API_KEY?.trim()) {
+    return {
+      provider: "anthropic",
+      model:
+        process.env.GENERATION_MODEL?.trim() || process.env.ANTHROPIC_MODEL?.trim() || "claude-3-7-sonnet-latest"
+    };
+  }
+
+  if (process.env.GEMINI_API_KEY?.trim()) {
+    return {
+      provider: "gemini",
+      model: process.env.GENERATION_MODEL?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash"
     };
   }
 
