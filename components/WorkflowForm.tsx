@@ -75,10 +75,10 @@ export function WorkflowForm({
     <section className="rounded-[30px] border border-ink/8 bg-paper/92 p-7 shadow-card backdrop-blur-sm">
       <div className="mb-8">
         <p className="editorial-kicker text-[11px] uppercase text-moss">Workflow Intake</p>
-        <h2 className="mt-3 max-w-2xl font-serif text-[2.15rem] leading-tight text-[#d1dbe5]">
+        <h2 className="mt-3 font-serif text-[2.15rem] leading-tight text-[#d1dbe5]">
           Describe the system, then shape the evaluation around what matters most.
         </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-white/68">
+        <p className="mt-4 text-sm leading-7 text-white/68">
           Start with the core description, then add optional context to sharpen the generated success criteria,
           failure modes, and starter dataset.
         </p>

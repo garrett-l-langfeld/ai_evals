@@ -30,7 +30,7 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
             <span />
           </div>
         </div>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72">
+        <p className="mt-4 text-sm leading-7 text-white/72">
           We&apos;re drafting success criteria, failure modes, starter test cases, a rubric, and export-ready
           artifacts.
         </p>
@@ -42,10 +42,10 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
     return (
       <section className="grid-accent rounded-[30px] border border-dashed border-ink/15 bg-white/40 p-8 shadow-card">
         <p className="editorial-kicker text-[11px] uppercase text-moss">Empty State</p>
-        <h2 className="mt-4 max-w-3xl font-serif text-[3rem] leading-[0.96] text-ink">
+        <h2 className="mt-4 font-serif text-[3rem] leading-[0.96] text-ink">
           Your eval kit will appear here.
         </h2>
-        <p className="mt-6 max-w-2xl text-base leading-8 text-[#28405a]">
+        <p className="mt-6 text-base leading-8 text-[#28405a]">
           Load one of the example workflows or describe your own AI system above, then generate a starter package
           you can review and export.
         </p>
@@ -118,23 +118,21 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
         </div>
       </SectionCard>
 
-      <div className="grid gap-5 xl:grid-cols-2">
-        <SectionCard title="Success Criteria" eyebrow="What Good Looks Like">
-          <ul className="space-y-2">
-            {evalKit.successCriteria.map((item) => (
-              <li key={item}>• {item}</li>
-            ))}
-          </ul>
-        </SectionCard>
+      <SectionCard title="Success Criteria" eyebrow="What Good Looks Like">
+        <ul className="space-y-2">
+          {evalKit.successCriteria.map((item) => (
+            <li key={item}>• {item}</li>
+          ))}
+        </ul>
+      </SectionCard>
 
-        <SectionCard title="Failure Modes" eyebrow="Risk Map">
-          <ul className="space-y-2">
-            {evalKit.failureModes.map((item) => (
-              <li key={item}>• {item}</li>
-            ))}
-          </ul>
-        </SectionCard>
-      </div>
+      <SectionCard title="Failure Modes" eyebrow="Risk Map">
+        <ul className="space-y-2">
+          {evalKit.failureModes.map((item) => (
+            <li key={item}>• {item}</li>
+          ))}
+        </ul>
+      </SectionCard>
 
       <SectionCard title="Test Cases" eyebrow="Starter Dataset">
         <div className="grid gap-4 lg:grid-cols-2">
@@ -154,34 +152,32 @@ export function ResultsPanel({ input, evalKit, provider, model, isLoading }: Res
         </div>
       </SectionCard>
 
-      <div className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
-        <SectionCard title="Grader Rubric" eyebrow="Scoring Guide">
-          <div className="space-y-4">
-            {evalKit.graderRubric.map((dimension) => (
-              <article
-                key={dimension.name}
-                className="rounded-[22px] border border-white/10 bg-white/6 p-5"
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <h4 className="text-base font-semibold text-[#edf2f7]">{dimension.name}</h4>
-                  <span className="rounded-full bg-gold px-3 py-1 text-xs font-semibold text-ink">
-                    {dimension.scaleMin}-{dimension.scaleMax}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm leading-7 text-white/72">{dimension.description}</p>
-                <p className="mt-4 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">High score:</span> {dimension.highScoreMeaning}</p>
-                <p className="mt-2 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">Low score:</span> {dimension.lowScoreMeaning}</p>
-              </article>
-            ))}
-          </div>
-        </SectionCard>
+      <SectionCard title="Grader Rubric" eyebrow="Scoring Guide">
+        <div className="space-y-4">
+          {evalKit.graderRubric.map((dimension) => (
+            <article
+              key={dimension.name}
+              className="rounded-[22px] border border-white/10 bg-white/6 p-5"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <h4 className="text-base font-semibold text-[#edf2f7]">{dimension.name}</h4>
+                <span className="rounded-full bg-gold px-3 py-1 text-xs font-semibold text-ink">
+                  {dimension.scaleMin}-{dimension.scaleMax}
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-7 text-white/72">{dimension.description}</p>
+              <p className="mt-4 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">High score:</span> {dimension.highScoreMeaning}</p>
+              <p className="mt-2 text-sm leading-7"><span className="font-semibold text-[#edf2f7]">Low score:</span> {dimension.lowScoreMeaning}</p>
+            </article>
+          ))}
+        </div>
+      </SectionCard>
 
-        <SectionCard title="Eval Dataset Schema" eyebrow="Export Model">
-          <pre className="overflow-x-auto rounded-[24px] bg-ink p-5 text-xs leading-7 text-white">
-            {JSON.stringify(evalKit.evalDatasetSchema, null, 2)}
-          </pre>
-        </SectionCard>
-      </div>
+      <SectionCard title="Eval Dataset Schema" eyebrow="Export Model">
+        <pre className="overflow-x-auto rounded-[24px] bg-ink p-5 text-xs leading-7 text-white">
+          {JSON.stringify(evalKit.evalDatasetSchema, null, 2)}
+        </pre>
+      </SectionCard>
     </section>
   );
 }
