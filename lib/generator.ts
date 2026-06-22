@@ -1,4 +1,6 @@
 import { generateObject, generateText } from "ai";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { createXai } from "@ai-sdk/xai";
@@ -80,6 +82,20 @@ function getLanguageModel(settings: GenerationSettings) {
         "xAI is selected, but XAI_API_KEY is missing from .env.local."
       );
       return createXai({ apiKey }).chat(settings.model);
+    }
+    case "anthropic": {
+      const apiKey = requiredEnv(
+        "ANTHROPIC_API_KEY",
+        "Anthropic is selected, but ANTHROPIC_API_KEY is missing from .env.local."
+      );
+      return createAnthropic({ apiKey }).chat(settings.model);
+    }
+    case "gemini": {
+      const apiKey = requiredEnv(
+        "GEMINI_API_KEY",
+        "Gemini is selected, but GEMINI_API_KEY is missing from .env.local."
+      );
+      return createGoogleGenerativeAI({ apiKey, name: "google.generative-ai" }).chat(settings.model);
     }
     case "openai-compatible": {
       const apiKey = requiredEnv(

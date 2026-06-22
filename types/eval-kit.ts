@@ -9,7 +9,7 @@ export type WorkflowInput = {
   edgeCases?: string;
 };
 
-export type GenerationProvider = "mock" | "openai" | "xai" | "openai-compatible";
+export type GenerationProvider = "mock" | "openai" | "xai" | "anthropic" | "gemini" | "openai-compatible";
 
 export type GenerationSettings = {
   provider: GenerationProvider;

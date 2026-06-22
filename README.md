@@ -36,11 +36,16 @@ cp .env.example .env.local
 
 3. Choose the generation engine in `.env.local`.
 
-Example using an OpenAI-compatible provider such as OpenRouter:
+Example using OpenRouter through the OpenAI-compatible mode:
 
 ```bash
 GENERATION_PROVIDER=openai-compatible
 GENERATION_MODEL=meta-llama/llama-3.3-8b-instruct:free
+COMPATIBLE_API_KEY=your_openrouter_api_key_here
+COMPATIBLE_BASE_URL=https://openrouter.ai/api/v1
+COMPATIBLE_PROVIDER_NAME=OpenRouter
+COMPATIBLE_SUPPORTS_STRUCTURED_OUTPUTS=false
+NEXT_PUBLIC_COMPATIBLE_MODEL=meta-llama/llama-3.3-8b-instruct:free
 ```
 
 Then add credentials for the provider you want to use.
@@ -55,6 +60,20 @@ For xAI:
 
 ```bash
 XAI_API_KEY=your_xai_api_key_here
+```
+
+For Anthropic:
+
+```bash
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+ANTHROPIC_MODEL=claude-3-7-sonnet-latest
+```
+
+For Gemini:
+
+```bash
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-2.5-flash
 ```
 
 For an OpenAI-compatible provider such as OpenRouter:
@@ -77,11 +96,12 @@ npm run dev
 
 ## Provider support
 
-The app supports four generation modes:
+The app supports five bring-your-own-key generation modes:
 
-- `Mock`: deterministic local demo, no API key needed
 - `OpenAI`: uses `OPENAI_API_KEY`
 - `xAI`: uses `XAI_API_KEY`
+- `Anthropic`: uses `ANTHROPIC_API_KEY`
+- `Gemini`: uses `GEMINI_API_KEY`
 - `OpenAI-compatible`: uses `COMPATIBLE_API_KEY` plus `COMPATIBLE_BASE_URL`
 
 The app reads the active provider and model from `.env.local`. Secrets stay server-side in the Next.js API route and are never exposed in client-side code.
@@ -141,7 +161,7 @@ npm run build
 For a quick demo:
 
 1. Open the app.
-2. Set `GENERATION_PROVIDER=mock` for a quota-free local demo, or configure a real provider in `.env.local`.
+2. Configure one of the supported provider keys in `.env.local`.
 3. Load one of the built-in examples.
 4. Click `Generate Eval Kit`.
 
@@ -163,7 +183,6 @@ lib/
   export.ts
   generator.ts
   markdown.ts
-  mock-generator.ts
   model-providers.ts
   prompt.ts
   schemas.ts
@@ -182,5 +201,4 @@ types/
 ## Notes
 
 - The generator runs through the Vercel AI SDK provider layer, so new providers can be added without rewriting the app flow.
-- Mock mode remains available for fast demos and quota-free local testing.
 - API keys stay server-side and are not stored in the repository.
